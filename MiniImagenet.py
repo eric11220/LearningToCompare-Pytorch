@@ -83,7 +83,7 @@ class MiniImagenet(Dataset):
             next(csvreader, None)  # skip (filename, label)
             for i, row in enumerate(csvreader):
                 filename = row[0]
-                label = row[1].split("_")[1]
+                label = int(row[1])
                 # append filename to current label
                 if label in dictLabels.keys():
                     dictLabels[label].append(filename)
