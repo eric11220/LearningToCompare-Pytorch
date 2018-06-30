@@ -6,6 +6,12 @@ from MiniImagenet import MiniImagenet
 from compare import Compare
 from utils import make_imgs
 
+def adjust_learning_rate(optimizer, cur_lr):
+    lr = cur_lr * 0.5
+    for param_group in optimizer.param_groups:
+        param_group['lr'] = lr
+    return cur_lr
+
 if __name__ == '__main__':
     from MiniImagenet import MiniImagenet
     from torch.utils.data import DataLoader
@@ -17,7 +23,8 @@ if __name__ == '__main__':
     k_shot = 4
     k_query = 1 # query num per class
     batchsz = 3
-    resume = "model_best.pth.tar"
+    lr = 1e-3
+    resume = None #"model_best.pth.tar"
 
     # Multi-GPU support
     print('To run on single GPU, change device_ids=[0] and downsize batch size! \nmkdir ckpt if not exists!')
@@ -32,11 +39,15 @@ if __name__ == '__main__':
     params = sum([np.prod(p.size()) for p in model_parameters])
     print('total params:', params)
 
-    optimizer = optim.Adam(net.parameters(), lr=1e-3)
+    optimizer = optim.Adam(net.parameters(), lr=lr)
     tb = SummaryWriter('runs', str(datetime.now()))
 
+    cur_lr = lr
     best_accuracy = 0
     for epoch in range(1000):
+        if epoch % 10 == 0:
+            cur_lr = adjust_learning_rate(optimizer, cur_lr):
+
 
         mini = MiniImagenet('../mini-imagenet/', mode='train', n_way=n_way, k_shot=k_shot, k_query=k_query,
                             batchsz=10000, resize=32)
