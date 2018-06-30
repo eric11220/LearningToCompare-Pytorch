@@ -30,17 +30,17 @@ class Compare(nn.Module):
         self.k_shot = k_shot
 
         # Load pre-trained model
-        model = resnet(num_classes=80, depth=20)
-        model = torch.nn.DataParallel(model).cuda()
 
         if resume is not None:
+            model = resnet(num_classes=80, depth=20)
+            model = torch.nn.DataParallel(model).cuda()
             checkpoint = torch.load(resume)
             model.load_state_dict(checkpoint['state_dict'])
 
-        model = ResnetConv(model.module)
-        self.repnet = model
-
-        #self.repnet = repnet_deep(False)
+            model = ResnetConv(model.module)
+            self.repnet = model
+        else:
+            self.repnet = repnet_deep(False).cuda()
 
         # we need to know the feature dim, so here is a forwarding.
         repnet_sz = self.repnet(Variable(torch.rand(2, 3, 32, 32)).cuda()).size()
