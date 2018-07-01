@@ -46,7 +46,7 @@ if __name__ == '__main__':
     best_accuracy = 0
     for epoch in range(1000):
         if epoch % 10 == 0:
-            cur_lr = adjust_learning_rate(optimizer, cur_lr):
+            cur_lr = adjust_learning_rate(optimizer, cur_lr)
 
 
         mini = MiniImagenet('../mini-imagenet/', mode='train', n_way=n_way, k_shot=k_shot, k_query=k_query,
